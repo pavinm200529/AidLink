@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Resources | AidLink</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        AidLink
+      </div>
+      <nav class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/dashboard.html">Command Center</a>
+        <a href="/report.html">Report Disaster</a>
+        <a href="/request.html">Request Resources</a>
+        <a href="/volunteers.html">Volunteers</a>
+        <a href="/resources.html" class="active">Resources</a>
+      </nav>
+      <div
+        style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748b;">
+        v1.2.0 | Senior Architect Edition
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header style="margin-bottom: 32px;">
+        <h1 style="font-size: 28px;">Inventory Control</h1>
+        <p class="text-muted">Manage the global stockpile of emergency resources.</p>
+      </header>
+
+      <div class="grid grid-2 mb-4">
+        <div class="card">
+          <h3 class="mb-4">Add New Inventory</h3>
+          <form id="resourceForm">
+            <div class="form-group">
+              <label>Resource Name</label>
+              <input name="name" placeholder="Oxygen Cylinders, Food Packets..." required>
+            </div>
+            <div class="form-group">
+              <label>Quantity</label>
+              <input name="quantity" type="number" placeholder="500" required>
+            </div>
+            <div class="form-group">
+              <label>Storage Location</label>
+              <input name="location" placeholder="Warehouse A, Central Station...">
+            </div>
+            <div class="form-group">
+              <label>Inventory Notes</label>
+              <textarea name="notes" rows="3" placeholder="Expiry dates, handling instructions..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Add to Stockpile</button>
+          </form>
+          <p id="status" class="mt-4 text-center"></p>
+        </div>
+
+        <div class="card">
+          <h3 class="mb-4">Available Stock</h3>
+          <div style="max-height: 500px; overflow-y: auto;">
+            <ul id="resourceList" class="grid gap-2"></ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/session.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/resources.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime.js"></script>
+  <script>
+    if (!session.getToken()) {
+      window.location = '/';
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login | AidLink</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .login-card {
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+
+    .login-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .login-card h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 32px;
+      font-weight: 500;
+      font-size: 18px;
+    }
+
+    .form-group label {
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    input {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    input:focus {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: -8px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+
+    .remember-me input {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .forgot-password {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        AidLink
+      </div>
+      <h2>Secure Access Portal</h2>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input name="email" type="email" required placeholder="name@organisation.org">
+        </div>
+        <div class="form-group">
+          <label>Authentication Token / Password</label>
+          <input name="password" type="password" required placeholder="••••••••">
+        </div>
+        <div class="form-footer">
+          <label class="remember-me">
+            <input type="checkbox"> Remember me
+          </label>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary"
+          style="width: 100%; height: 48px; font-size: 16px; font-weight: 600;">
+          Authorize Session
+        </button>
+      </form>
+
+      <div id="status" class="mt-4 text-center" style="font-size: 14px; min-height: 20px;"></div>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 14px; color: #94a3b8;">
+        Don't have an account? <a href="/register.html"
+          style="color: var(--primary); text-decoration: none; font-weight: 500;">Create one here</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/session.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const email = ev.target.email.value.trim();
+      const password = ev.target.password.value;
+      const status = document.getElementById('status');
+      const btn = ev.target.querySelector('button');
+
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+      status.style.color = 'var(--accent)';
+      status.textContent = 'Contacting security server...';
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          status.textContent = (err.error || 'Access Denied');
+          status.style.color = '#ef4444';
+          btn.disabled = false;
+          btn.textContent = 'Authorize Session';
+          return;
+        }
+
+        const body = await res.json();
+        status.textContent = 'Authorization Successful. Redirecting...';
+        status.style.color = 'var(--primary)';
+
+        session.setToken(body.token, body.user);
+        setTimeout(() => window.location = '/home.html', 800);
+      } catch (e) {
+        status.textContent = 'Network communication failure';
+        status.style.color = '#ef4444';
+        btn.disabled = false;
+        btn.textContent = 'Authorize Session';
+      }
+    });
+
+    // Check if already logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      if (session.getToken()) {
+        window.location = '/home.html';
+      }
+    });
+  </script>
+</body>
+
+</html>

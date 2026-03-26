@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Volunteers | AidLink</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        AidLink
+      </div>
+      <nav class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/dashboard.html">Command Center</a>
+        <a href="/report.html">Report Disaster</a>
+        <a href="/request.html">Request Resources</a>
+        <a href="/volunteers.html" class="active">Volunteers</a>
+        <a href="/resources.html">Resources</a>
+      </nav>
+      <div
+        style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748b;">
+        v1.2.0 | Senior Architect Edition
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header style="margin-bottom: 32px;">
+        <h1 style="font-size: 28px;">Volunteer Management</h1>
+        <p class="text-muted">Register and coordinate the frontline response force.</p>
+      </header>
+
+      <div class="grid grid-2 mb-4">
+        <div class="card">
+          <h3 class="mb-4">Register as Volunteer</h3>
+          <form id="volunteerForm">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input name="name" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label>Contact Number</label>
+              <input name="contact" placeholder="+91 XXXXX XXXXX" required>
+            </div>
+            <div class="form-group">
+              <label>Specialized Skills</label>
+              <textarea name="skills" rows="3" placeholder="First Aid, Driving, Logistics, etc."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Current Availability</label>
+              <select name="availability">
+                <option value="available">Available (Immediate)</option>
+                <option value="unavailable">Unavailable (On-Call)</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+              <button type="submit" class="btn btn-primary" style="flex: 2;">Register Volunteer</button>
+              <button type="reset" id="cancelBtn" class="btn btn-outline" style="flex: 1;">Cancel</button>
+            </div>
+          </form>
+          <p id="status" class="mt-4 text-center"></p>
+        </div>
+
+        <div class="card">
+          <h3 class="mb-4">Active Volunteers</h3>
+          <div style="max-height: 500px; overflow-y: auto;">
+            <ul id="volList" class="grid gap-2"></ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/session.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/volunteers.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime.js"></script>
+  <script>
+    if (!session.getToken()) {
+      window.location = '/';
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Service Certificate | AidLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2563eb; --secondary: #1e293b; --accent: #f59e0b; }
+        body { background: #f1f5f9; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .cert-container { background: white; width: 100%; max-width: 900px; padding: 60px; position: relative; border: 15px solid #1e293b; box-shadow: 0 40px 100px -20px rgba(0,0,0,0.3); box-sizing: border-box; }
+        .cert-border-inner { position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px solid #f59e0b; pointer-events: none; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .logo { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .gov-title { text-transform: uppercase; letter-spacing: 4px; font-weight: 600; color: var(--secondary); font-size: 14px; margin-bottom: 20px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--secondary); margin: 0; font-style: italic; }
+        .certify-text { font-size: 18px; color: #64748b; margin: 30px 0 10px; }
+        .volunteer-name { font-size: 36px; font-weight: 800; color: var(--primary); border-bottom: 2px solid #e2e8f0; display: inline-block; padding: 0 40px 5px; margin-bottom: 30px; }
+        .description { font-size: 18px; line-height: 1.6; color: #475569; max-width: 700px; margin: 0 auto; }
+        .footer { margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .sig-block { text-align: center; width: 220px; }
+        .sig-line { border-top: 1px solid #1e293b; margin-bottom: 10px; }
+        .sig-name { font-weight: 600; font-size: 14px; }
+        .sig-title { font-size: 12px; color: #64748b; }
+        .seal { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 120px; height: 120px; opacity: 0.1; pointer-events: none; }
+        @media print { body { background: none; padding: 0; } .cert-container { box-shadow: none; border: 10px solid #000; } .btn-print { display: none; } }
+        .btn-print { position: fixed; top: 20px; right: 20px; background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+    </style>
+</head>
+<body>
+    <button class="btn-print" onclick="window.print()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Print Certificate
+    </button>
+
+    <div class="cert-container" id="certContent">
+        <div class="cert-border-inner"></div>
+        <div class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                AidLink
+            </div>
+            <div class="gov-title">Government Disaster Management Authority</div>
+            <h1>Certificate of Merit</h1>
+        </div>
+
+        <div style="text-align: center;">
+            <p class="certify-text">This is to certify that</p>
+            <div class="volunteer-name" id="userName">Verifying...</div>
+            <p class="description">
+                has selflessly volunteered and provided distinguished service during the 
+                <strong id="disasterTitle">...</strong> relief operations. 
+                Their dedication and commitment to humanity in times of crisis have been invaluable.
+            </p>
+            <p style="margin-top: 20px; font-style: italic; color: #64748b;">Issued on <span id="issueDate">...</span></p>
+        </div>
+
+        <div class="footer">
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-name">Digital Verification</div>
+                <div class="sig-title">AidLink Command Center</div>
+            </div>
+            <div class="sig-block">
+                <div style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 5px; color: #1e293b;">Official Seal</div>
+                <div class="sig-line"></div>
+                <div class="sig-name">Nodal Officer</div>
+                <div class="sig-title">Disaster Relief Bureau</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const assignmentId = urlParams.get('id');
+            if (!assignmentId) {
+                document.body.innerHTML = '<h1>Error: Missing Certificate ID</h1>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/certificates/${assignmentId}`);
+                if (!res.ok) throw new Error('Certificate not found');
+                const data = await res.json();
+
+                document.getElementById('userName').textContent = data.user_name || 'Volunteer';
+                document.getElementById('disasterTitle').textContent = data.disaster_title || 'Relief';
+                document.getElementById('issueDate').textContent = new Date().toLocaleDateString('en-GB', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+                document.title = `Certificate - ${data.user_name}`;
+            } catch (err) {
+                document.body.innerHTML = '<h1>Error Loading Certificate Data</h1>';
+            }
+        });
+    </script>
+</body>
+</html>

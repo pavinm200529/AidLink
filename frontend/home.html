@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AidLink | Disaster Resource Coordination</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <meta name="description" content="Professional Disaster Resource Management and Coordination Portal">
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        AidLink
+      </div>
+      <nav class="nav-links">
+        <a href="/home.html" class="active">Home</a>
+        <a href="/dashboard.html">Command Center</a>
+        <a href="/report.html">Report Disaster</a>
+        <a href="/request.html">Request Resources</a>
+        <a href="/volunteers.html">Volunteers</a>
+        <a href="/resources.html">Resources</a>
+      </nav>
+      <div
+        style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748b;">
+        v1.2.0 | Senior Architect Edition
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <section style="margin-bottom: 60px;">
+        <h1 style="font-size: 48px; margin-bottom: 16px;">Coordinate Relief <br><span
+            style="color: var(--primary);">Save Lives.</span></h1>
+        <p style="font-size: 18px; color: var(--text-muted); max-width: 600px; margin-bottom: 32px;">
+          AidLink is a professional-grade platform designed for rapid disaster coordination, resource allocation, and
+          volunteer management.
+          Real-time updates for emergency responders.
+        </p>
+        <div style="display: flex; gap: 16px;">
+          <a href="/report.html" class="btn btn-primary" style="text-decoration: none;">Report Incident</a>
+          <a href="/dashboard.html" class="btn btn-outline" style="text-decoration: none;">View Live Dashboard</a>
+        </div>
+      </section>
+
+      <section class="grid grid-3 mb-4">
+        <div class="card">
+          <h3 class="mb-4">Real-time Tracking</h3>
+          <p class="text-muted">Monitor disasters across the nation with our live interactive mapping system.</p>
+        </div>
+        <div class="card">
+          <h3 class="mb-4">Resource Allocation</h3>
+          <p class="text-muted">Efficiently manage food, medicine, and emergency supplies where they are needed most.
+          </p>
+        </div>
+        <div class="card">
+          <h3 class="mb-4">Volunteer Network</h3>
+          <p class="text-muted">Coordinate with thousands of registered volunteers ready to assist at a moment's notice.
+          </p>
+        </div>
+      </section>
+
+      <section class="mt-4">
+        <div class="glass-card" style="padding: 40px; text-align: center;">
+          <h2>Join the Mission</h2>
+          <p class="text-muted mb-4">Help us make a difference in disaster recovery operations.</p>
+          <a href="/volunteers.html" class="btn btn-secondary" style="text-decoration: none;">Register as Volunteer</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/session.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime.js"></script>
+  <script>
+    if (!session.getToken()) {
+      window.location = '/';
+    }
+  </script>
+</body>
+
+</html>

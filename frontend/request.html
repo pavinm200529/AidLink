@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Request Resources | AidLink</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        AidLink
+      </div>
+      <nav class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/dashboard.html">Command Center</a>
+        <a href="/report.html">Report Disaster</a>
+        <a href="/request.html" class="active">Request Resources</a>
+        <a href="/volunteers.html">Volunteers</a>
+        <a href="/resources.html">Resources</a>
+      </nav>
+      <div
+        style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748b;">
+        v1.2.0 | Senior Architect Edition
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header style="margin-bottom: 32px;">
+        <h1 style="font-size: 28px;">Resource Requests</h1>
+        <p class="text-muted">Request critical supplies for affected areas.</p>
+      </header>
+
+      <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <form id="requestForm">
+          <div class="form-group">
+            <label>Your Name <span style="color:#ef4444">*</span></label>
+            <input name="requesterName" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label>Contact Number <span style="color:#ef4444">*</span></label>
+            <input name="contact" type="tel" placeholder="e.g. +91 98765 43210" required>
+          </div>
+          <div class="form-group">
+            <label>Item Category <span style="color:#ef4444">*</span></label>
+            <select name="resources" required>
+              <option value="Food & Water">Food & Water</option>
+              <option value="Medical Supplies">Medical Supplies</option>
+              <option value="Shelter Kits">Shelter Kits</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Logistics/Transport">Logistics/Transport</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Required Quantity</label>
+            <input name="quantity" type="number" min="1" value="1" placeholder="Number of units needed">
+          </div>
+          <div class="form-group">
+            <label>Priority Level</label>
+            <select name="priority">
+              <option value="Regular">Regular</option>
+              <option value="Urgent">Urgent</option>
+              <option value="Critical">Critical (Immediate Support Needed)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Destination Location <span style="color:#ef4444">*</span></label>
+            <input name="location" placeholder="Sub-district, Camp, or Warehouse address" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Resource Request</button>
+        </form>
+        <p id="status" class="mt-4 text-center"></p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/session.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/request.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime.js"></script>
+  <script>
+    if (!session.getToken()) {
+      window.location = '/';
+    }
+  </script>
+</body>
+
+</html>

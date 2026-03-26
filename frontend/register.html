@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Create Account | AidLink</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .login-card {
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .login-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .login-card h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 32px;
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .form-group label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        input,
+        select {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        input:focus,
+        select:focus {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        option {
+            background: #1e293b;
+            color: white;
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .back-to-login a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                AidLink
+            </div>
+            <h2>Create New Secure Account</h2>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input name="name" type="text" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input name="email" type="email" required placeholder="name@organisation.org">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" required>
+                        <option value="volunteer">Volunteer (Field Staff)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Create Password</label>
+                    <input name="password" type="password" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; height: 48px; font-size: 16px; font-weight: 600; margin-top: 10px;">
+                    Register Account
+                </button>
+            </form>
+
+            <div id="status" class="mt-4 text-center" style="font-size: 14px; min-height: 20px;"></div>
+
+            <div class="back-to-login">
+                Already have an account? <a href="/">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/register.js"></script>
+</body>
+
+</html>

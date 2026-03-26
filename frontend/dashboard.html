@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Command Center | AidLink</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        AidLink
+      </div>
+      <nav class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/dashboard.html" class="active">Command Center</a>
+        <a href="/report.html">Report Disaster</a>
+        <a href="/request.html">Request Resources</a>
+        <a href="/volunteers.html">Volunteers</a>
+        <a href="/resources.html">Resources</a>
+      </nav>
+      <div
+        style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748b;">
+        v1.2.0 | Senior Architect Edition
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: start;">
+        <div>
+          <h1 style="font-size: 28px;">Crisis Command Center</h1>
+          <p class="text-muted">Real-time oversight of ongoing relief operations.</p>
+        </div>
+        <div
+          style="text-align: right; background: var(--bg-card); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+          <div
+            style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 4px;">
+            Live System Time</div>
+          <div id="liveClock"
+            style="font-family: 'Inter', monospace; font-size: 18px; font-weight: 700; color: var(--secondary);">
+            --:--:--</div>
+          <div id="liveDate" style="font-size: 12px; color: var(--text-muted);">Feb 27, 2026</div>
+        </div>
+      </header>
+
+      <div class="grid grid-4 mb-4">
+        <div class="card stat-card">
+          <span class="stat-label">Total Disasters</span>
+          <span id="card-disasters" class="stat-value">—</span>
+          <span class="badge badge-danger">Active</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Resource Requests</span>
+          <span id="card-requests" class="stat-value">—</span>
+          <span class="badge badge-success" style="background: #e0f2fe; color: #0ea5e9;">Pending</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Active Volunteers</span>
+          <span id="card-volunteers" class="stat-value">—</span>
+          <span class="badge badge-success">Ready</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Total Resources</span>
+          <span id="card-resources" class="stat-value">—</span>
+          <span class="badge" style="background:#fef3c7; color:#d97706;">Stocked</span>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="card">
+          <h3 class="mb-4">Disaster Distribution Map</h3>
+          <div id="map"></div>
+        </div>
+      </div>
+
+      <div class="grid grid-2 mb-4">
+        <div class="card">
+          <h3 class="mb-4">Recent Reports</h3>
+          <div id="disasters" class="mb-4"></div>
+          <a href="/report.html" class="btn btn-primary" style="width: 100%; text-decoration:none;">Submit New
+            Report</a>
+        </div>
+        <div class="card">
+          <h3 class="mb-4">Resource Requests</h3>
+          <div id="requests" class="mb-4"></div>
+          <a href="/request.html" class="btn btn-outline" style="width: 100%; text-decoration:none;">Manage Requests</a>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card" id="adminVolunteerSection">
+          <h3 class="mb-4">Registered Personnel</h3>
+          <div id="adminVolunteerList" style="max-height: 400px; overflow-y: auto;">
+            <p class="text-muted">Loading personnel records...</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="mb-4">Operational Activity</h3>
+          <ul id="activityLog" class="text-muted"
+            style="list-style: none; display: flex; flex-direction: column; gap: 12px;"></ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Volunteer Selection Modal -->
+  <div id="volunteerModal" class="modal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <h3 style="margin:0;">Select Personnel</h3>
+        <button onclick="closeVolunteerModal()"
+          style="background:none; border:none; font-size:28px; cursor:pointer; color:var(--text-muted); line-height:1;">&times;</button>
+      </div>
+      <div id="volunteerList" style="display:grid; gap:16px;">
+        <!-- Volunteers injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/session.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/main.js"></script>
+  <!-- Chart.js and Leaflet JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script>
+    if (!session.getToken()) {
+      window.location = '/';
+    }
+  </script>
+</body>
+
+</html>
