@@ -16,6 +16,11 @@ class UserDAO extends BaseDAO {
         return await this.run(sql, [status, id]);
     }
 
+    async updateRole(id, role) {
+        const sql = 'UPDATE users SET role = ? WHERE id = ?';
+        return await this.run(sql, [role, id]);
+    }
+
     async findNearbyVolunteers(lat, lng, radiusKm = 50) {
         const sql = `
             SELECT id, name, email, lat, lng, status,

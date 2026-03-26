@@ -16,6 +16,10 @@ class AuditDAO extends BaseDAO {
             LIMIT ${safeLimit}`;
         return await this.all(sql);
     }
+    async delete(id) {
+        const sql = 'DELETE FROM audit_logs WHERE id = ?';
+        return await this.run(sql, [id]);
+    }
 }
 
 module.exports = AuditDAO;

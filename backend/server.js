@@ -426,6 +426,17 @@ app.get('/api/audit', requireRole('admin', 'government', 'ngo'), async (req, res
   }
 });
 
+app.delete('/api/audit/:id', requireRole('admin'), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await auditDAO.delete(id);
+    if (result.changes === 0) return res.status(404).json({ error: 'Log not found' });
+    res.json({ message: 'Audit log deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/certificates/:assignmentId', async (req, res) => {
   const { assignmentId } = req.params;
   try {
@@ -440,6 +451,21 @@ app.get('/api/certificates/:assignmentId', async (req, res) => {
     const rows = await dbAsync.all(sql, [assignmentId]);
     if (!rows.length) return res.status(404).json({ error: 'Certificate data not found' });
     res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/users/:id/role', requireRole('admin'), async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
+  if (!['admin', 'volunteer', 'ngo', 'government'].includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+  }
+  try {
+    await userDAO.updateRole(id, role);
+    await auditDAO.log('update:user_role', req.user.id, { targetId: id, newRole: role });
+    res.json({ message: 'User role updated successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -481,7 +507,7 @@ app.get('/api/volunteers', async (req, res) => {
   }
 });
 
-app.delete('/api/volunteers/:id', async (req, res) => {
+app.delete('/api/volunteers/:id', requireRole('admin', 'government', 'ngo'), async (req, res) => {
   const { id } = req.params;
   try {
     // 1. Fetch volunteer info to find matching user account

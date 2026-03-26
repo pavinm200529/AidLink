@@ -393,16 +393,17 @@ async function loadDashboard() {
   const vSection = document.getElementById('adminVolunteerSection');
 
   const user = window.session && window.session.getUser();
-  const isAdmin = user && ['admin', 'government', 'ngo'].includes(user.role);
+  const hasManagementAccess = user && ['admin', 'government', 'ngo'].includes(user.role);
+  const isSuperAdmin = user && user.role === 'admin';
 
-  if (!isAdmin && vSection) vSection.style.display = 'none';
+  if (!hasManagementAccess && vSection) vSection.style.display = 'none';
 
   try {
     const [statsRes, dRes, rRes, vRes] = await Promise.all([
       fetch(API_BASE + '/api/stats'),
       fetch(API_BASE + '/api/disasters'),
       fetch(API_BASE + '/api/requests'),
-      isAdmin ? fetch(API_BASE + '/api/volunteers') : Promise.resolve(null)
+      hasManagementAccess ? fetch(API_BASE + '/api/volunteers') : Promise.resolve(null)
     ]);
 
     if (statsRes.status === 401 || dRes.status === 401 || rRes.status === 401) {
@@ -442,9 +443,17 @@ async function loadDashboard() {
       if (auditRes.ok) {
         const audits = await auditRes.json();
         activity.innerHTML = audits.slice(0, 15).map(a => `
-            <li style="border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-                <div style="font-weight: 600; font-size: 14px; color: var(--secondary);">${a.action}</div>
-                <div style="font-size: 12px; color: var(--text-muted);">By ${a.user_name || 'System'} • ${new Date(a.timestamp).toLocaleString()}</div>
+            <li style="border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <div style="font-weight: 600; font-size: 14px; color: var(--secondary);">${a.action}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">By ${a.user_name || 'System'} • ${new Date(a.timestamp).toLocaleString()}</div>
+                </div>
+                ${isSuperAdmin ? `
+                <button onclick="deleteAuditLog('${a.id}')" class="btn-icon" style="color:#ef4444; background:none; border:none; cursor:pointer;" title="Delete Log">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6m4-11v6"/>
+                    </svg>
+                </button>` : ''}
             </li>
         `).join('') || '<li>No recent activity</li>';
       } else if (auditRes.status === 403) {
@@ -465,8 +474,8 @@ async function loadDashboard() {
     requests.slice(0, 5).forEach(r => rContainer.appendChild(renderRequestCard(r)));
     if (requests.length === 0) rContainer.innerHTML = '<div class="text-muted">No pending requests</div>';
 
-    // Render volunteers for admin
-    if (isAdmin && vList && volunteers) {
+    // Render volunteers for management
+    if (hasManagementAccess && vList && volunteers) {
       vList.innerHTML = volunteers.map(v => `
             <div style="padding: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -480,6 +489,11 @@ async function loadDashboard() {
                         <span class="badge" style="font-size: 9px; ${v.availability === 'available' ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;'}">
                             ${v.availability}
                         </span>
+                        <button onclick="promoteToAdmin('${v.id}')" class="btn-icon" style="color:var(--primary); background:none; border:none; cursor:pointer;" title="Promote to Admin">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 21v-8m-4 8l4-4 4 4M8 3h8a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+                            </svg>
+                        </button>
                         <button onclick="deleteVolunteer('${v.id}')" class="btn-icon" style="color:#ef4444; background:none; border:none; cursor:pointer;" title="Delete Volunteer">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6m4-11v6"/>
@@ -497,6 +511,35 @@ async function loadDashboard() {
   }
 }
 
+
+async function deleteAuditLog(id) {
+  if (!confirm('Delete this activity log?')) return;
+  try {
+    const res = await fetch(API_BASE + `/api/audit/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Deletion failed');
+    if (window.notify) window.notify.showToast('Log entry removed', { type: 'success' });
+    await loadDashboard();
+  } catch (e) {
+    if (window.notify) window.notify.showToast('Error: ' + e.message, { type: 'error' });
+  }
+}
+
+async function promoteToAdmin(id) {
+  if (!confirm('Are you sure you want to promote this user to Admin? They will have full access to the system.')) return;
+  try {
+    const res = await fetch(API_BASE + `/api/users/${id}/role`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: 'admin' })
+    });
+    // JSON Content-Type is application/json but I'll use our fetch patch
+    if (!res.ok) throw new Error('Promotion failed');
+    if (window.notify) window.notify.showToast('User promoted to Admin', { type: 'success' });
+    await loadDashboard();
+  } catch (e) {
+    if (window.notify) window.notify.showToast('Promotion failed: ' + e.message, { type: 'error' });
+  }
+}
 
 async function deleteVolunteer(id) {
   if (!confirm('Are you sure you want to delete this volunteer record?')) return;
